@@ -200,7 +200,6 @@ class EnvInfo:
 @dataclass
 class SystemInfo:
     hostname: str = tagged("hostname", format="{:10s}")
-    ip_address: str = tagged("ip_address", format="{:10s}")
     python_version: str = tagged("python_version", format="{:10s}")
     cpu_info: Optional[CPUInfo] = tagged("cpu_info")
     gpu_info: Optional[GPUInfo] = tagged("gpu_info")
@@ -210,7 +209,6 @@ class SystemInfo:
 
 def collect_system_info() -> SystemInfo:
     hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
     python_version = platform.python_version()
     cpu_info = get_cpu_info()
     gpu_info = get_gpu_info()
@@ -221,7 +219,6 @@ def collect_system_info() -> SystemInfo:
 
     system_info = SystemInfo(
         hostname=hostname,
-        ip_address=ip_address,
         python_version=python_version,
         cpu_info=cpu_info,
         gpu_info=gpu_info,
@@ -265,7 +262,8 @@ def get_pytorch_info(gpu_info: GPUInfo) -> None:
                 pass
 
             pytorch_devices = []
-            for i in range(gpu_info.pytorch_device_count):
+            for i in range(1):
+                # show one device
                 props = torch.cuda.get_device_properties(i)
                 pytorch_devices.append(PyTorchDevice(
                     device_id=i,
@@ -298,7 +296,7 @@ def get_gpu_info() -> Optional[GPUInfo]:
     nvidia_smi_path = run("which nvidia-smi")
     if not nvidia_smi_path:
         return None 
-    driver_version = run("nvidia-smi --query-gpu=driver_version --format=csv,noheader")
+    driver_version = run("nvidia-smi --query-gpu=driver_version --format=csv,noheader | head -n 1")
     cuda_version = run("nvcc --version 2>/dev/null | grep 'release' | awk '{print $NF}'")
     return GPUInfo(
         nvidia_smi_path=nvidia_smi_path,
