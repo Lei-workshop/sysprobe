@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sysprobe"
+dynamic = ["version"]
+dependencies = []
+requires-python = ">=3.11"
+description = ""
+readme = "README.md"
+
+[tool.black]
+required-version = "26"
+
+[tool.isort]
+profile = "black"
+skip_gitignore=true
+
+[tool.basedpyright]
+include = ["sysprobe.py"]
+pythonVersion = "3.11"
+pythonPlatform = "Linux"
+typeCheckingMode = "strict"
+deprecateTypingAliases = true
+reportMissingTypeStubs = false
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.37.1",
+    "black~=26.0",
+    "isort>=7.0.0",
+]
